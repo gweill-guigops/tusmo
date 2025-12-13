@@ -1,0 +1,84 @@
+services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.websecure.address=:443'
+      # - '--entrypoints.web.http.redirections.entrypoint.to=websecure'
+      # - '--entrypoints.web.http.redirections.entrypoint.scheme=https'
+      # - '--entrypoints.web.http.redirections.entrypoint.permanent=true'
+      - '--entrypoints.websecure.http.tls=true'
+
+      - '--providers.file.filename=/traefik_dynamic.yml'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedByDefault=false'
+      - '--providers.docker.network=tusmo-net'
+
+      - '--api.dashboard=true'
+      - '--api.insecure=false'
+
+      - '--log.level=DEBUG'
+      - '--log.format=json'
+      - '--log.filePath=/traefik.log/traefik.log'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '8080:8080' # Dashboard
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - './traefik_dynamic.yml:/traefik_dynamic.yml:ro'
+      - './certs:/certs:ro'
+    networks:
+      - tusmo-net
+
+  client:
+    container_name: tusmo-frontend
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    command: npm run dev -- --host 0.0.0.0
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.client.rule=PathPrefix(`/`)'
+      - 'traefik.http.routers.client.entrypoints=web'
+      - 'traefik.http.routers.client.service=client-service'
+      - 'traefik.http.services.client-service.loadbalancer.server.port=3000'
+      # - 'traefik.http.routers.client.tls=true'
+    networks:
+      - tusmo-net
+
+  backend:
+    container_name: tusmo-backend
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.backend.rule=PathPrefix(`/socket.io`)'
+      - 'traefik.http.routers.backend.entrypoints=web'
+      - 'traefik.http.routers.backend.service=backend-service'
+      - 'traefik.http.services.backend-service.loadbalancer.server.port=3001'
+      # - 'traefik.http.routers.backend.tls=true'
+
+    networks:
+      - tusmo-net
+
+networks:
+  tusmo-net:
+    driver: bridge

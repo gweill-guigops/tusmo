@@ -1,0 +1,14 @@
+FROM node:24
+
+WORKDIR /app
+
+# Installation des dépendances
+COPY package*.json ./
+RUN npm install
+
+# Code source (monté en volume ensuite)
+COPY . .
+
+EXPOSE 3001
+
+CMD ["nodemon", "src/index.ts"]
