@@ -67,6 +67,14 @@ export function getSolutions(): Promise<Map<number, Dictionnary>> {
   return singletonPromiseSolutions;
 }
 
+export async function isInDictionary(attempt: string): Promise<boolean> {
+  const dictionary = await getDictionary();
+  const length = attempt.length;
+  const initial = attempt.charAt(0);
+
+  return dictionary.get(length)?.get(initial)?.has(attempt) ?? false;
+}
+
 export async function pickSolution(length: number): Promise<string> {
   const solutions = await getSolutions();
   const alpha = solutions.get(length);

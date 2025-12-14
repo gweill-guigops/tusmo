@@ -1,7 +1,7 @@
 import { Client, ClientPlay } from './Client';
 import { GameConfiguration } from './GameConfiguration';
 import { Guess, LetterState } from './Guess';
-import { pickSolution } from './LoadDictionnary';
+import { isInDictionary, pickSolution } from './LoadDictionnary';
 
 const MIN_LENGTH_WORD = 6;
 
@@ -42,6 +42,7 @@ function compareWords(target: string, attempt: string): Guess {
     validation: validation.join(''),
   };
 }
+
 export interface Game {
   words: string[];
   submit(clientState: ClientPlay, client: Client, attempt: string): void;
@@ -66,20 +67,19 @@ export class GameImpl implements Game {
     );
   }
 
-  submit(clientState: ClientPlay, client: Client, attempt: string): void {
+  async submit(clientState: ClientPlay, client: Client, attempt: string): Promise<void> {
     const turn = clientState.getCurrentTurn();
     const word = this.words[clientState.getTurnsSize() - 1];
+    const validAttempt = await isInDictionary(attempt);
+    if (!validAttempt) {
+      client.getWs().emit('deny-attempt');
+      return;
+    }
     const guess = compareWords(word, attempt);
 
     turn.addGuess(guess);
 
     client.getWs().emit('guesses', turn.guesses);
-
-    console.log('guess', guess);
-    console.log('turn', turn);
-    console.log('hasNext', this.hasNext(clientState.getTurnsSize()));
-    console.log('getTurnsSize', clientState.getTurnsSize());
-    console.log('lost', this.lost(turn.getGuessesSize()));
 
     if (guess.found) {
       if (this.hasNext(clientState.getTurnsSize())) {

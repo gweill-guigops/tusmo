@@ -40,6 +40,10 @@ socket.on('players', (pl) => {
   players.value = pl;
 });
 
+socket.on('deny-attempt', () => {
+  isWaiting.value = false;
+});
+
 socket.on('guess', (guess: Guess) => {
   guesses.value.push(guess);
   isWaiting.value = false;
