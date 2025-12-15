@@ -59,11 +59,7 @@ const rowStates = computed((): string[][] => {
   const nbG = props.guesses.length;
   if (nbG < props.config.attempts && !props.isEnded) {
     results[nbG] = lastLine.value.map((c, index) => {
-      return index === 0
-        ? TILE_PRESENCE['C']
-        : known.value.charAt(index) === c && c !== ' '
-          ? TILE_PRESENCE['C']
-          : '';
+      return index === 0 ? TILE_PRESENCE['C'] : '';
     });
   }
 
@@ -164,8 +160,8 @@ function getTileColor(r: number, c: number) {
   <!-- BOARD -->
   <div class="flex justify-center py-2 sm:py-4">
     <div
-      class="grid gap-2 sm:gap-3 w-full max-w-[360px] sm:max-w-none"
-      :style="`grid-template-rows: repeat(${config.attempts}, minmax(48px, 1fr))`"
+      class="grid gap-2 sm:gap-2 w-full max-w-[360px] sm:max-w-none"
+      :style="`grid-template-rows: repeat(${config.attempts}, 1fr)`"
     >
       <div
         v-for="(row, r) in rows"
@@ -185,39 +181,41 @@ function getTileColor(r: number, c: number) {
     </div>
   </div>
 
-  <!-- CONTROLS -->
-  <p class="text-center text-xs sm:text-sm text-slate-400 mt-2">
-    Vert : bien placé — Jaune : présent — Gris : absent
-  </p>
+  <div>
+    <!-- CONTROLS -->
+    <p class="text-center text-xs sm:text-sm text-slate-400 mt-2">
+      Vert : bien placé — Jaune : présent — Gris : absent
+    </p>
 
-  <!-- KEYBOARD -->
-  <div class="mt-6 flex flex-col items-center gap-2 select-none">
-    <div class="flex gap-1 sm:gap-2">
-      <div
-        v-for="k in 'azertyuiop'.split('')"
-        class="kbd"
-        :class="getKeyColor(k)"
-        @click="input(k)"
-      >
-        {{ k }}
+    <!-- KEYBOARD -->
+    <div class="mt-6 flex flex-col items-center gap-2 select-none">
+      <div class="flex gap-1 sm:gap-2">
+        <div
+          v-for="k in 'azertyuiop'.split('')"
+          class="kbd"
+          :class="getKeyColor(k)"
+          @click="input(k)"
+        >
+          {{ k }}
+        </div>
       </div>
-    </div>
-    <div class="flex gap-1 sm:gap-2">
-      <div
-        v-for="k in 'qsdfghjklm'.split('')"
-        class="kbd"
-        :class="getKeyColor(k)"
-        @click="input(k)"
-      >
-        {{ k }}
+      <div class="flex gap-1 sm:gap-2">
+        <div
+          v-for="k in 'qsdfghjklm'.split('')"
+          class="kbd"
+          :class="getKeyColor(k)"
+          @click="input(k)"
+        >
+          {{ k }}
+        </div>
       </div>
-    </div>
-    <div class="flex gap-1 sm:gap-2">
-      <div class="kbd px-4 sm:px-6" @click="del">Del</div>
-      <div v-for="k in 'wxcvbn'.split('')" class="kbd" :class="getKeyColor(k)" @click="input(k)">
-        {{ k }}
+      <div class="flex gap-1 sm:gap-2">
+        <div class="kbd px-4 sm:px-6" @click="del">Del</div>
+        <div v-for="k in 'wxcvbn'.split('')" class="kbd" :class="getKeyColor(k)" @click="input(k)">
+          {{ k }}
+        </div>
+        <div class="kbd px-4 sm:px-6" @click="submit">Enter</div>
       </div>
-      <div class="kbd px-4 sm:px-6" @click="submit">Enter</div>
     </div>
   </div>
 </template>

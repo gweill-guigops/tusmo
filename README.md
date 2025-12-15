@@ -2,7 +2,7 @@ Fonctionnalités :
 
 - [x] Validation des mots lors du submit
 - [ ] Ajout bouton de sortie de partie vers accueil
-- [ ] Equilibrer le tirage en fonction de la fréquence des mots
+- [x] Equilibrer le tirage en fonction de la fréquence des mots
 
 UI :
 
@@ -17,4 +17,4 @@ UX :
 
 Style :
 
-- [ ] Refonte page lobby
+- [x] Refonte page lobby
