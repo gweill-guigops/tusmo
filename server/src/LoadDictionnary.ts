@@ -27,11 +27,33 @@ async function loadBrotliDictionary(filePath: string) {
 let singletonPromiseDictionary: Promise<Map<number, Dictionnary>> | null = null;
 let singletonPromiseSolutions: Promise<Map<number, Dictionnary>> | null = null;
 
+const distributionDictionary = {};
+type Distribution = {
+  distribution: number[];
+  size: number;
+};
+
+function getDistribution(dictionary: Dictionnary): Distribution {
+  const distribution: number[] = [];
+  let sum = 0;
+  for (const letter of dictionary.values()) {
+    sum += letter.size;
+    distribution.push(sum);
+  }
+  return { distribution, size: sum };
+}
+
 async function loadDictionary() {
   const dict6 = await loadBrotliDictionary('assets/valides_6.br');
   const dict7 = await loadBrotliDictionary('assets/valides_7.br');
   const dict8 = await loadBrotliDictionary('assets/valides_8.br');
   const dict9 = await loadBrotliDictionary('assets/valides_9.br');
+
+  distributionDictionary[6] = getDistribution(dict6);
+  distributionDictionary[7] = getDistribution(dict7);
+  distributionDictionary[8] = getDistribution(dict8);
+  distributionDictionary[9] = getDistribution(dict9);
+
   return new Map([
     [6, dict6],
     [7, dict7],
@@ -81,8 +103,16 @@ export async function pickSolution(length: number): Promise<string> {
   if (alpha === undefined) {
     throw new Error(`No dictionnary for words with length ${length}`);
   }
+  const distribution = distributionDictionary[length];
+
   const alphabetSize = alpha.size;
-  const dict = Array.from(alpha.values())[Math.floor(Math.random() * alphabetSize)];
+
+  const random = Math.random() * distribution.size;
+
+  const index = distribution.distribution.findIndex((d) => d >= random);
+
+  const dict = Array.from(alpha.values())[index];
+
   const dictSize = dict.size;
   const solution = Array.from(dict.values())[Math.floor(Math.random() * dictSize)];
   console.log(`pick ${solution} : word with ${length} letters`);
