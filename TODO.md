@@ -1,1 +1,0 @@
-- [ ] Validation des mots lors du submit

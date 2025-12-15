@@ -3,6 +3,7 @@ interface Player {
   id: string;
 }
 
+import { PencilIcon } from '@heroicons/vue/24/outline';
 const emit = defineEmits(['setRoom']);
 const { socket } = useWebSocket();
 const { clientID, username } = useProfile();
@@ -15,7 +16,6 @@ socket.on('error', (error) => {
 });
 
 socket.on('prestart', (gameID) => {
-  console.info('prestart', gameID);
   emit('setRoom', gameID);
 });
 
@@ -41,64 +41,101 @@ const timer = computed(() => {
 const players = computed(() => {
   return lobby.value?.clients ?? [];
 });
+
+const playersTable = computed(() => {
+  return (lobby.value?.clients ?? []).concat(
+    Array.from({ length: Math.max(0, 8 - (lobby.value?.clients ?? []).length) }),
+  );
+});
+
+function getInitial(player) {
+  return player?.username.charAt(0) ?? '';
+}
+function getUsername(player) {
+  return player?.username ?? '';
+}
 </script>
 
 <template>
-  <div className="bg-white p-6 rounded shadow-md w-screen m-6">
-    <template v-if="lobby">
-      <h3 className="text-xl font-bold mb-4">{{ players.length }} joueurs en attente</h3>
-      <div class="flex items-center justify-center bg-gray-200 rounded-lg p-4 mt-8">
-        <span id="timer" class="text-4xl font-bold"> {{ timer }} </span>
+  <main class="h-full mx-auto p-4 sm:p-6 flex gap-6">
+    <section
+      class="h-full bg-white/5 border border-white/10 rounded-xl p-4 md:p-6 shadow-xl flex-1"
+    >
+      <div v-if="lobby" class="h-1/6 flex items-center justify-center">
+        <div class="max-w-20 bg-gray-200 rounded-full mt-2 md:mt-4 mb-2 md:mb-4 p-4">
+          <span id="timer" class="text-4xl font-bold inline-block text-gray-500">
+            {{ timer }}
+          </span>
+        </div>
       </div>
-      <div>Game : {{ lobby.id }}</div>
-      <div>Socket : {{ socket.id }}</div>
-    </template>
 
-    <table>
-      <thead>
-        <tr>
-          <th>username</th>
-          <th>clientID</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="player in players" :key="player.clientID">
-          <td>
-            {{ player.username }}
-          </td>
-          <td>
-            {{ player.clientID }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+      <div class="h-4/6 py-5">
+        <div class="h-full overflow-y-auto scroller">
+          <table class="w-full table-fixed border-separate border-spacing-y-2">
+            <tbody>
+              <tr v-for="(player, index) in playersTable" :key="index">
+                <td class="size-12 rounded-l-lg bg-blue-500 text-center bold">
+                  {{ getInitial(player) }}
+                </td>
+                <td class="bg-blue-600 rounded-r-lg text-left pl-3">
+                  {{ getUsername(player) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-    <button
-      v-if="!hasJoin"
-      className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-      @click.stop.prevent="join"
-    >
-      Rejoindre
-    </button>
+      <div class="w-full h-1/6">
+        <div class="h-1/2">
+          <button
+            v-if="!hasJoin"
+            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+            @click.stop.prevent="join"
+          >
+            Rejoindre
+          </button>
 
-    <button
-      v-else
-      className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
-      @click.stop.prevent="quit"
-    >
-      Quitter
-    </button>
+          <button
+            v-else
+            className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
+            @click.stop.prevent="quit"
+          >
+            Quitter
+          </button>
+        </div>
 
-    <input
-      className="w-full border p-2 rounded mb-4"
-      type="text"
-      v-model="username"
-      placeholder="Pseudo"
-      :disabled="hasJoin"
-    />
-
-    <div className="w-full border p-2 rounded mb-4">clientID: {{ clientID }}</div>
-  </div>
+        <div class="h-1/2">
+          <div class="h-full max-h-10 flex align-top">
+            <PencilIcon class="h-full p-1 flex-none bg-slate-100 rounded-l text-gray-500" />
+            <input
+              class="h-full flex-auto rounded-r pl-1 text-gray-500"
+              type="text"
+              v-model="username"
+              placeholder="Pseudo"
+              :disabled="hasJoin"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </template>
 
-<style lang="postcss" scoped></style>
+<style lang="postcss" scoped>
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-thumb {
+  /* Foreground */
+  background: var(--scrollbar-foreground);
+  background: rgb(59, 130, 246);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-background);
+  background: transparent;
+}
+</style>

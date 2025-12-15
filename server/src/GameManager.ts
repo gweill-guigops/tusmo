@@ -56,10 +56,17 @@ export class GameManager {
 
   tick() {
     const actives: Map<String, GameServer> = new Map();
-    console.info('gm.tick', 'gameServers #', this.gameServers.size);
+    console.info(
+      `#gameServers : ${this.gameServers.size}`,
+      Array.from(this.gameServers.entries()).map(([id, gameServer]) => ({
+        id,
+        clients: gameServer.getClients().size,
+        phase: gameServer.phase(),
+      })),
+    );
+
     for (const [id, gameServer] of this.gameServers) {
       const phase = gameServer.phase();
-      console.info('gm.tick', { id, phase, clients: gameServer.getClients().size });
       if (phase === 'FINISHED') {
         gameServer.end();
       } else {
