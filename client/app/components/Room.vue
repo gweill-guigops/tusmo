@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { HomeIcon } from '@heroicons/vue/24/outline';
 import type { Guesses, Guess, Configuration } from '~/types/Game';
 
 const { socket } = useWebSocket();
@@ -6,6 +7,8 @@ const { socket } = useWebSocket();
 const props = defineProps<{
   roomID: string;
 }>();
+
+const emits = defineEmits(['quit-room']);
 
 const config: Ref<Configuration | undefined> = ref();
 socket.on('start', (configuration) => {
@@ -44,7 +47,7 @@ socket.on('deny-attempt', () => {
   isWaiting.value = false;
 });
 
-socket.on('guess', (guess: Guess) => {
+socket.on('valid-attempt', (guess: Guess) => {
   guesses.value.push(guess);
   isWaiting.value = false;
   isEnded.value = guesses.value.length === config.value?.attempts || guess.found;
@@ -54,6 +57,16 @@ async function submit(guess: string) {
   isWaiting.value = true;
   socket.emit('submit', guess);
 }
+
+function quitRoom() {
+  socket.off('start');
+  socket.off('word-info');
+  socket.off('players');
+  socket.off('deny-attempt');
+  socket.off('valid-attempt');
+
+  emits('quit-room');
+}
 </script>
 
 <template>
@@ -62,14 +75,20 @@ async function submit(guess: string) {
       class="h-full grid grid-rows-[10px_3fr_2fr] bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 shadow-xl flex-1"
     >
       <!-- HEADER -->
-      <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+      <header class="flex flex-col sm:flex-row items-center justify-between mb-4 gap-2">
         <div class="text-sm text-slate-400">
           Room <span class="text-white font-semibold">{{ props.roomID }}</span>
         </div>
+
+        <button
+          class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white focus:ring-2 focus:ring-violet-500"
+          @click.prevent="quitRoom()"
+        >
+          <HomeIcon class="w-5 h-5 text-white-500" />
+        </button>
       </header>
       <!-- ========== MAIN PANEL ========== -->
       <Game
-        class=""
         v-if="config && wordInfo"
         :config="config"
         :wordInfo="wordInfo"

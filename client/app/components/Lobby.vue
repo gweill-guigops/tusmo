@@ -24,11 +24,11 @@ socket.on('lobby', (game) => {
 });
 
 function join() {
-  socket.emit('join-lobby', { clientID: clientID.value, username: username.value });
+  socket.emit('join-lobby-game', { clientID: clientID.value, username: username.value });
   hasJoin.value = true;
 }
 function quit() {
-  socket.emit('quit-lobby');
+  socket.emit('quit-lobby-game');
   hasJoin.value = false;
 }
 
@@ -44,7 +44,7 @@ const players = computed(() => {
 
 const playersTable = computed(() => {
   return (lobby.value?.clients ?? []).concat(
-    Array.from({ length: Math.max(0, 8 - (lobby.value?.clients ?? []).length) }),
+    Array.from({ length: Math.max(0, 6 - (lobby.value?.clients ?? []).length) }),
   );
 });
 
@@ -54,6 +54,10 @@ function getInitial(player) {
 function getUsername(player) {
   return player?.username ?? '';
 }
+onMounted(() => {
+  console.log('onMounted', socket);
+  socket.emit('join-lobby');
+});
 </script>
 
 <template>

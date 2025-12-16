@@ -76,7 +76,7 @@ export class GameServer {
 
       const ws = client.getWs();
 
-      ws.leave('landing');
+      ws.leave('join-lobby');
       ws.leave('lobby');
       ws.on('submit', (attempt) => this.game.submit(clientState, client, attempt.toLowerCase()));
     }

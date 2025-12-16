@@ -15,21 +15,23 @@ const gm = new GameManager(ns);
 
 setInterval(() => {
   gm.tick();
-  ns.to('landing').emit('lobby', gm.getLobby().toString());
+  ns.to('join-lobby').emit('lobby', gm.getLobby().toString());
 }, 1000);
 
 io.on('connection', (socket) => {
   console.log('Un utilisateur est connecté');
   const clientID = socket.id;
 
-  socket.join('landing');
+  socket.on('join-lobby', () => {
+    socket.join('join-lobby');
+  });
 
-  socket.on('join-lobby', ({ persistentID, username }) => {
+  socket.on('join-lobby-game', ({ persistentID, username }) => {
     gm.joinLobby(clientID, new Client(clientID, persistentID, username, socket));
     socket.join(gm.getLobby().getRoom());
   });
 
-  socket.on('quit-lobby', () => {
+  socket.on('quit-lobby-game', () => {
     socket.leave(gm.getLobby().getRoom());
     gm.quitLobby(clientID);
   });

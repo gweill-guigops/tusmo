@@ -103,7 +103,7 @@ export class GameImpl implements Game {
       }, 1000);
     }
 
-    client.getWs().emit('guess', guess);
+    client.getWs().emit('valid-attempt', guess);
   }
 
   hasNext(found: number): boolean {
