@@ -1,13 +1,47 @@
-FROM node:24
+# =========================
+# Base
+# =========================
+FROM node:24 AS base
 
 WORKDIR /app
 
-# Installation des dépendances
+# Dépendances système (layer stable)
+RUN apt-get update && apt-get install -y \
+  ca-certificates \
+  curl \
+  git \
+  && rm -rf /var/lib/apt/lists/*
+
+
+# =========================
+# Dependencies
+# =========================
+FROM base AS deps
+
+# Copier uniquement les manifests
 COPY package*.json ./
+
+# Droits avant npm install
+RUN chown -R node:node /app
+
+USER node
+
+# Installation dépendances (cache Docker)
 RUN npm install
 
-# Code source (monté en volume ensuite)
-COPY . .
+
+# =========================
+# Development
+# =========================
+FROM base AS dev
+
+# Copier node_modules depuis deps
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copier le reste du code
+COPY --chown=node:node . .
+
+USER node
 
 EXPOSE 3000
 

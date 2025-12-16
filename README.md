@@ -7,10 +7,10 @@ Fonctionnalités :
 
 UI :
 
-- [ ] Ajout bouton de sortie de partie vers accueil
+- [x] Ajout bouton de sortie de partie vers accueil
 - [ ] Affichage de l'état des autres joueurs lors d'une partie
 - [ ] Création tableau de score en fin de partie
-- [ ] Affichage du temps passée dans la partie
+- [x] Affichage du temps passée dans la partie
 
 UX :
 

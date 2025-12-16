@@ -19,5 +19,3 @@ export interface Guess {
 export type Guesses = Guess[];
 
 export type LetterState = 'C' | 'P' | 'A';
-
-export interface Config {}

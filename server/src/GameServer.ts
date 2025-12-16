@@ -8,7 +8,7 @@ const warmup = 1000 * 10;
 export class GameServer {
   public readonly id: string;
   configuration: GameConfiguration;
-  game: Game;
+  private game: Game;
   private clients: Map<string, Client> = new Map();
   private clientStates: Map<string, ClientPlay> = new Map();
 
@@ -100,7 +100,7 @@ export class GameServer {
     this._hasStarted = true;
     this.startedAt = Date.now();
 
-    ns.to(this.getRoom()).emit('start', this.configuration);
+    ns.to(this.getRoom()).emit('start', this.configuration, this.startedAt);
 
     for (const [clientID, client] of this.clients) {
       this.game.words[0];
