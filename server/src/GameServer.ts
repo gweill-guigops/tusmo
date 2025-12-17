@@ -71,7 +71,7 @@ export class GameServer {
 
     const clients = this.getClients().entries();
     for (const [clientID, client] of clients) {
-      const clientState = new ClientPlay(clientID);
+      const clientState = new ClientPlay(clientID, client.username);
       this.clientStates.set(clientID, clientState);
 
       const ws = client.getWs();
@@ -79,6 +79,10 @@ export class GameServer {
       ws.leave('join-lobby');
       ws.leave('lobby');
       ws.on('submit', (attempt) => this.game.submit(clientState, client, attempt.toLowerCase()));
+      ws.on('quit-game', () => {
+        client.getWs().leave(this.getRoom());
+        this.clients.delete(clientID);
+      });
     }
 
     this.game = new GameImpl(this.configuration);
@@ -111,10 +115,10 @@ export class GameServer {
     }
 
     setInterval(() => {
-      // ns.to(this.getRoom()).emit(
-      //   'leaderboard',
-      //   Array.from(this.clientStates.values()).map((clientState) => clientState.getCurrentTurn()),
-      // );
+      ns.to(this.getRoom()).emit(
+        'players',
+        Array.from(this.clientStates.values()).map((clientState) => clientState.getTurnSumary()),
+      );
     }, 1000);
   }
 

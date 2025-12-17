@@ -6,6 +6,7 @@ export interface Configuration {
 export interface WordInfo {
   initial: string;
   size: number;
+  isLast: boolean;
 }
 
 export type WordInfos = WordInfo[];

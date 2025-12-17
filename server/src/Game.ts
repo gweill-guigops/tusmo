@@ -79,8 +79,6 @@ export class GameImpl implements Game {
 
     turn.addGuess(guess);
 
-    client.getWs().emit('guesses', turn.guesses);
-
     if (guess.found) {
       if (this.hasNext(clientState.getTurnsSize())) {
         clientState.addTurn();
@@ -90,17 +88,16 @@ export class GameImpl implements Game {
           client.getWs().emit('word-info', {
             initial: word.charAt(0),
             size: word.length,
+            isLast: !this.hasNext(clientState.getTurnsSize()),
           });
         }, 1000);
       } else {
-        setTimeout(() => {
-          client.getWs().emit('end');
-        }, 1000);
+        clientState.endedAt = Date.now();
+        clientState.isWon = false;
       }
     } else if (this.lost(turn.getGuessesSize())) {
-      setTimeout(() => {
-        client.getWs().emit('end');
-      }, 1000);
+      clientState.endedAt = Date.now();
+      clientState.isWon = false;
     }
 
     client.getWs().emit('valid-attempt', guess);
