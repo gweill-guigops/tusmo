@@ -9,8 +9,6 @@ const io = new Server(httpServer, {});
 
 const ns = io.of('/');
 
-const sids = ns.adapter.sids;
-
 const gm = new GameManager(ns);
 
 setInterval(() => {
@@ -36,9 +34,9 @@ io.on('connection', (socket) => {
     gm.quitLobby(clientID);
   });
 
-  socket.on('disconnect', () => {
-    console.debug('disconnect', clientID, sids);
-    for (const roomID of sids.get(clientID) ?? []) {
+  socket.on('disconnecting', () => {
+    console.debug('disconnect', clientID, socket.rooms);
+    for (const roomID of socket.rooms ?? []) {
       const room = gm.getRoom(roomID);
       if (room === undefined) {
         continue;

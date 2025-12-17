@@ -78,11 +78,16 @@ export class GameServer {
 
       ws.leave('join-lobby');
       ws.leave('lobby');
-      ws.on('submit', (attempt) => this.game.submit(clientState, client, attempt.toLowerCase()));
-      ws.on('quit-game', () => {
-        client.getWs().leave(this.getRoom());
+
+      const onSubmit = (attempt) => this.game.submit(clientState, client, attempt.toLowerCase());
+      const onQuit = () => {
+        ws.leave(this.getRoom());
+        ws.off('submit', onSubmit);
         this.clients.delete(clientID);
-      });
+      };
+
+      ws.on('submit', onSubmit);
+      ws.once('quit-game', onQuit);
     }
 
     this.game = new GameImpl(this.configuration);

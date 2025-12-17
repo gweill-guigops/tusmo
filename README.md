@@ -1,3 +1,7 @@
+Performance :
+
+- [ ] Emettre players uniquement si besoin
+
 Fonctionnalités :
 
 - [x] Validation des mots lors du submit
@@ -8,8 +12,8 @@ Fonctionnalités :
 UI :
 
 - [x] Ajout bouton de sortie de partie vers accueil
-- [ ] Affichage de l'état des autres joueurs lors d'une partie
-- [ ] Création tableau de score en fin de partie
+- [x] Affichage de l'état des autres joueurs lors d'une partie
+- [x] Création tableau de score en fin de partie
 - [x] Affichage du temps passée dans la partie
 
 UX :

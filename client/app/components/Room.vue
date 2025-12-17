@@ -94,7 +94,7 @@ function quitRoom() {
 <template>
   <main v-if="!isEnded" class="h-full max-w-[1100px] mx-auto p-4 sm:p-6 flex gap-6">
     <section
-      class="h-full grid grid-rows-[0.1fr_3fr_2fr] bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 shadow-xl flex-1"
+      class="h-full grid grid-rows-[0.1fr_3fr_2fr] bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 shadow-xl flex-auto"
     >
       <!-- HEADER -->
       <header class="flex flex-row items-center justify-between mb-4 gap-2">
@@ -126,14 +126,14 @@ function quitRoom() {
     </section>
     <!-- ========== SIDEBAR ========== -->
     <aside
-      class="bg-white/5 border border-white/10 rounded-xl py-2 md:p-2 shadow-xl hidden md:block flex-2"
+      class="bg-white/5 border border-white/10 rounded-xl py-2 md:p-2 shadow-xl hidden md:block flex-initial w-52"
     >
       <h2 class="text-sm text-slate-400 mb-3">Joueurs</h2>
 
       <div class="flex flex-col gap-3 h-full overflow-x-hidden overflow-y-scroll">
         <div class="grid" v-for="([username, validations], index) in players" :key="index">
           <div class="flex items-center gap-3 p-2 bg-white/5 border border-white/10 rounded-lg">
-            <div>
+            <div class="w-full">
               <div class="font-semibold text-white">{{ username }}</div>
 
               <div v-if="validations.toReversed().filter((v) => v.length > 0).length > 0">

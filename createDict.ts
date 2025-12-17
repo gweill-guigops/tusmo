@@ -9,13 +9,23 @@ function removeAccents(str: string): string {
 
 async function filterCsv() {
   // --- Config ---
-  const regex1 = /^(?<word>[A-zÀ-ú]{6,9})(,.*)?\.(?<feat>.*)$/g;
+  const regex1 = /^(?<word>[A-zÀ-ú]{6,9})(,(?<lemme>.*))?\.(?<feat>.*)$/im;
   const regex2 = /NPropre|Conc/;
   const regex3 = /^(PFX|XI|X)/;
   const regex4 = /V.*(Kms|Kmp|Kfs|Kfp|G|W).*/;
 
   const input = 'dela-fr-public.dic';
 
+  const lemmesRs = fs.createReadStream('lemme.csv');
+  const r2 = readline.createInterface({
+    input: lemmesRs,
+  });
+
+  const lemmes = new Set();
+
+  for await (const line of r2) {
+    lemmes.add(removeAccents(line).toLowerCase());
+  }
   const outReject1 = fs.createWriteStream('reject1.csv');
   const outReject2 = fs.createWriteStream('reject2.csv');
   const outReject3 = fs.createWriteStream('reject3.csv');
@@ -54,7 +64,7 @@ async function filterCsv() {
       continue;
     }
 
-    let { word, feat } = r1.groups;
+    let { word, lemme, feat } = r1.groups;
 
     word = removeAccents(word).toLowerCase();
     // // Regexp 2
@@ -75,28 +85,36 @@ async function filterCsv() {
       if (feat.startsWith('V') && !regex4.test(feat)) {
         featuresRejectedForSolution.set(feat, word);
       } else {
-        s6.add(word);
+        if (lemmes.has(lemme) || lemmes.has(word)) {
+          s6.add(word);
+        }
       }
       v6.add(word);
     } else if (word.length === 7) {
       if (feat.startsWith('V') && !regex4.test(feat)) {
         featuresRejectedForSolution.set(feat, word);
       } else {
-        s7.add(word);
+        if (lemmes.has(lemme) || lemmes.has(word)) {
+          s7.add(word);
+        }
       }
       v7.add(word);
     } else if (word.length === 8) {
       if (feat.startsWith('V') && !regex4.test(feat)) {
         featuresRejectedForSolution.set(feat, word);
       } else {
-        s8.add(word);
+        if (lemmes.has(lemme) || lemmes.has(word)) {
+          s8.add(word);
+        }
       }
       v8.add(word);
     } else {
       if (feat.startsWith('V') && !regex4.test(feat)) {
         featuresRejectedForSolution.set(feat, word);
       } else {
-        s9.add(word);
+        if (lemmes.has(lemme) || lemmes.has(word)) {
+          s9.add(word);
+        }
       }
       v9.add(word);
     }
@@ -134,9 +152,11 @@ async function filterCsv() {
     )
       .pipe(brotli)
       .pipe(streamOutput);
-
-    console.log('from');
   });
+
+  console.log('***************************');
+  console.log('********* Conservés *******');
+  console.log('***************************');
 
   features
     .entries()

@@ -93,7 +93,7 @@ export class GameImpl implements Game {
         }, 1000);
       } else {
         clientState.endedAt = Date.now();
-        clientState.isWon = false;
+        clientState.isWon = true;
       }
     } else if (this.lost(turn.getGuessesSize())) {
       clientState.endedAt = Date.now();
