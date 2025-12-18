@@ -1,6 +1,6 @@
 services:
   traefik:
-    image: traefik:v3.0
+    image: traefik:v3.4
     command:
       # - '--entrypoints.websecure.address=:443'
       # - '--entrypoints.websecure.http.tls=true'
