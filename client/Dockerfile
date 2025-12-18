@@ -1,12 +1,16 @@
-FROM node:18-alpine AS build
+FROM node:24 AS build
+
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
 
+FROM node:24 as prod
+WORKDIR /app
+COPY --from=build /app/.output ./.output
+COPY --chown=node:node package*.json .
+RUN npm install --production
 
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 3000
+CMD ["node", ".output/server/index.mjs"]

@@ -19,7 +19,7 @@ services:
 
       - '--log.level=DEBUG'
       - '--log.format=json'
-      - '--log.filePath=/traefik.log/traefik.log'
+      - '--log.filePath=/var/log/traefik.log'
     ports:
       - '80:80'
       - '443:443'

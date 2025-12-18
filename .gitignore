@@ -21,3 +21,5 @@ certs
 # data
 *.dic
 *.csv
+
+dist

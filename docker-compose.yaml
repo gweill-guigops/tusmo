@@ -2,28 +2,63 @@ services:
   traefik:
     image: traefik:v3.0
     command:
-      - '--api.dashboard=true'
+      # - '--entrypoints.websecure.address=:443'
+      # - '--entrypoints.websecure.http.tls=true'
+      - '--entrypoints.web.address=:80'
+      # - '--entrypoints.web.http.redirections.entrypoint.to=websecure'
+      # - '--entrypoints.web.http.redirections.entrypoint.scheme=https'
+      # - '--entrypoints.web.http.redirections.entrypoint.permanent=true'
+
+      # - '--providers.file.filename=/etc/traefik/traefik_dynamic.yml'
       - '--providers.docker=true'
       - '--providers.docker.exposedByDefault=false'
-      - '--entrypoints.web.address=:80'
+      - '--providers.docker.network=tusmo-net'
+      - '--api.dashboard=true'
+      - '--api.insecure=false'
+
+      - '--api.dashboard=true'
+      - '--providers.docker=true'
+
+      - '--log.level=INFO'
+      - '--log.format=json'
+      - '--log.filePath=/var/log/traefik.log'
     ports:
-      - '80:80'
-      - '8080:8080' # Dashboard
+      - '127.0.0.1:80:80'
+      - '127.0.0.1:443:443'
+      - '127.0.0.1:8080:8080' # Dashboard
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      # - './traefik_dynamic.yml:/etc/traefik/traefik_dynamic.yml:ro'
+      # - './certs:/certs:ro'
+    networks:
+      - tusmo-net
 
-  client:
+  client-prod:
+    container_name: tusmo-client
     build: ./client
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.client.rule=PathPrefix(`/`)'
-      - 'traefik.http.services.client.loadbalancer.server.port=80'
+      - 'traefik.http.routers.client.entrypoints=web'
+      - 'traefik.http.routers.client.service=client-service'
+      - 'traefik.http.services.client-service.loadbalancer.server.port=3000'
+    networks:
+      - tusmo-net
 
-  backend:
+  server-prod:
+    container_name: tusmo-server
     build: ./server
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.backend.rule=PathPrefix(`/ws`)'
-      - 'traefik.http.services.backend.loadbalancer.server.port=3001'
+      - 'traefik.http.routers.server.rule=PathPrefix(`/socket.io`)'
+      - 'traefik.http.routers.server.entrypoints=web'
+      - 'traefik.http.routers.server.service=server-service'
+      - 'traefik.http.services.server-service.loadbalancer.server.port=3001'
     environment:
       - NODE_ENV=production
+    networks:
+      - tusmo-net
+
+networks:
+  tusmo-net:
+    driver: bridge
