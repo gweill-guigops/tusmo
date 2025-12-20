@@ -73,13 +73,16 @@ function quitRoom() {
 
 <template>
   <main>
-    <section>
-      <div class="h-5/6 overflow-y-auto scroller p-2">
+    <section class="h-screen bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 shadow-xl">
+      <header class="w-full flex flex-row items-center justify-between mb-4 gap-2">
+        <h1 class="text-center items-center justify-center text-slate-400">Classement</h1>
+      </header>
+      <div class="h-4/6 overflow-y-auto scroller p-2">
         <table class="w-full table-fixed border-separate border-spacing-y-2">
           <tbody>
             <tr v-for="([pseudo, turns, endedAt, isWon], index) in orderedPlayer" :key="index">
               <td class="size-12 rounded-l-lg bg-blue-500 text-center bold">
-                {{ getInitial(pseudo) }}
+                {{ index + 1 }}
               </td>
               <td class="bg-blue-600 text-left pl-3">
                 {{ pseudo }}
