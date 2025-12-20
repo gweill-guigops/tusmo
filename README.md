@@ -1,6 +1,6 @@
 Performance :
 
-- [ ] Emettre players uniquement si besoin
+- [x] Emettre players uniquement si besoin
 
 Fonctionnalités :
 
