@@ -1,6 +1,9 @@
+import { useStorage } from '@vueuse/core';
+
 export const useProfile = () => {
-  const username = ref(`Anon${generateID()}`);
-  const clientID = ref(generateID());
+  const clientID = useStorage('clientID', generateID());
+  const username = useStorage('username', `Anon${generateID()}`);
+
   return {
     clientID,
     username,

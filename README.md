@@ -5,7 +5,6 @@ Performance :
 Fonctionnalités :
 
 - [x] Validation des mots lors du submit
-- [x] Validation des mots lors du submit
 - [ ] Ajouter saisie par clavier
 - [ ] Permettre la reconnexion avec récupération de la partie si existante
 
