@@ -171,7 +171,7 @@ function getTileColor(r: number, c: number) {
       <div
         v-for="(row, r) in rows"
         :key="r"
-        class="grid gap-0 sm:gap-0"
+        class="grid gap-0"
         :style="`grid-template-columns: repeat(${wordInfo.size}, 1fr)`"
       >
         <div
@@ -241,8 +241,9 @@ function getTileColor(r: number, c: number) {
 .kbd {
   @apply min-w-[32px] sm:min-w-[36px] md:min-w-[44px] px-2 sm:px-3 py-2
          rounded-md sm:rounded-lg
-         text-white font-bold uppercase text-sm
-         flex justify-center items-center touch-none;
+         text-white font-bold uppercase 
+         flex justify-center items-center touch-none
+         text-lg;
   cursor: pointer;
 }
 </style>

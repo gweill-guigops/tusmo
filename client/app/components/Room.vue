@@ -92,7 +92,7 @@ function quitRoom() {
 </script>
 
 <template>
-  <main v-if="!isEnded" class="h-full max-w-[1100px] mx-auto p-4 sm:p-6 flex gap-6">
+  <main v-if="!isEnded" class="h-screen max-w-[1100px] mx-auto p-4 sm:p-6 flex gap-6">
     <section
       class="h-full grid grid-rows-[0.1fr_3fr_2fr] bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 shadow-xl flex-auto"
     >
@@ -146,7 +146,7 @@ function quitRoom() {
       </div>
     </aside>
   </main>
-  <Leaderboard :players="players" :startedAt="startedAt" @quit-room="quitRoom" v-else />
+  <Leaderboard v-else :players="players" :startedAt="startedAt" @quit-room="quitRoom" />
 </template>
 
 <style lang="postcss" scoped>
