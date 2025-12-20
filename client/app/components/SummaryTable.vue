@@ -36,7 +36,7 @@ function getKeyColor(letter) {
         v-for="(row, r) in lastValidation"
         :key="r"
         class="grid h-3"
-        :style="`grid-template-columns: repeat(${row.length}, 1fr)`"
+        :style="`grid-template-columns: repeat(9, 1fr)`"
       >
         <div
           v-for="(letter, c) in row"

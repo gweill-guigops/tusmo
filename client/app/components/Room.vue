@@ -114,15 +114,17 @@ function quitRoom() {
         </button>
       </header>
       <!-- ========== MAIN PANEL ========== -->
-      <Game
-        v-if="configuration && wordInfo"
-        :config="configuration"
-        :wordInfo="wordInfo"
-        :disabled="isWaiting"
-        :isEnded="isGameEnded"
-        :guesses="guesses"
-        @submit="submit"
-      ></Game>
+      <Transition>
+        <Game
+          v-if="configuration && wordInfo"
+          :config="configuration"
+          :wordInfo="wordInfo"
+          :disabled="isWaiting"
+          :isEnded="isGameEnded"
+          :guesses="guesses"
+          @submit="submit"
+        ></Game>
+      </Transition>
     </section>
     <!-- ========== SIDEBAR ========== -->
     <aside
@@ -153,5 +155,15 @@ function quitRoom() {
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>
