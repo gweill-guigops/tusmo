@@ -1,9 +1,11 @@
+import { MD5 } from 'object-hash';
 import { Namespace } from 'socket.io';
 import { Client, ClientPlay } from './Client';
 import { GameConfiguration } from './GameConfiguration';
+
 import { Game, GameImpl } from './Game';
 
-const warmup = 1000 * 10;
+const warmup = 1000 * 20;
 
 export class GameServer {
   public readonly id: string;
@@ -15,6 +17,7 @@ export class GameServer {
   private _hasStarted = false;
   private _hasPrestarted = false;
   private startedAt: number | null = null;
+  private _hash: string | null = null;
   public readonly startAt: number;
   public readonly createdAt: number;
 
@@ -120,10 +123,14 @@ export class GameServer {
     }
 
     setInterval(() => {
-      ns.to(this.getRoom()).emit(
-        'players',
-        Array.from(this.clientStates.values()).map((clientState) => clientState.getTurnSumary()),
+      const players = Array.from(this.clientStates.values()).map((clientState) =>
+        clientState.getTurnSumary(),
       );
+      const newHash = MD5(players);
+      if (this._hash == null || newHash != this._hash) {
+        this._hash = newHash;
+        ns.to(this.getRoom()).emit('players', players);
+      }
     }, 1000);
   }
 
