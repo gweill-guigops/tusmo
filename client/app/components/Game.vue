@@ -61,6 +61,10 @@ const rowStates = computed((): string[][] => {
     results[nbG] = lastLine.value.map((c, index) => {
       return index === 0 ? TILE_PRESENCE['C'] : '';
     });
+    const lGuess = guess.value.length;
+    if (lGuess < props.wordInfo.size) {
+      results[nbG][lGuess] = 'surbrillance';
+    }
   }
 
   return results;
@@ -94,7 +98,6 @@ async function submit() {
 watch(
   () => props.guesses.length,
   (count, prevCount) => {
-    console.info({ count, prevCount, isEnded: props.isEnded });
     if (!props.isEnded && props.guesses.length < props.config.attempts) {
       guess.value = props.wordInfo.initial;
     }
@@ -152,13 +155,15 @@ function getTileColor(r: number, c: number) {
       ? 'bg-green-600 border-green-800'
       : state === 'present'
         ? 'bg-yellow-500 border-yellow-700'
-        : 'bg-slate-600 border-slate-700';
+        : state === 'surbrillance'
+          ? 'bg-white border-white/10 bg-opacity-10 '
+          : 'bg-slate-600 border-slate-700';
 }
 </script>
 
 <template>
   <!-- BOARD -->
-  <div class="flex justify-center py-2 sm:py-4">
+  <div class="flex justify-center py-2 sm:py-4 bg-opacity-50">
     <div
       class="grid gap-2 sm:gap-2 w-full max-w-[360px] sm:max-w-none"
       :style="`grid-template-rows: repeat(${config.attempts}, 1fr)`"
@@ -181,15 +186,15 @@ function getTileColor(r: number, c: number) {
     </div>
   </div>
 
-  <div>
+  <div class="flex flex-col">
     <!-- CONTROLS -->
     <p class="text-center text-xs sm:text-sm text-slate-400 mt-2">
       Vert : bien placé — Jaune : présent — Gris : absent
     </p>
 
     <!-- KEYBOARD -->
-    <div class="mt-6 flex flex-col items-center gap-2 select-none">
-      <div class="flex gap-1 sm:gap-2">
+    <div class="flex flex-1 flex-col items-center mt-6 gap-2 select-none">
+      <div class="flex flex-1 gap-1 sm:gap-2">
         <div
           v-for="k in 'azertyuiop'.split('')"
           class="kbd"
@@ -199,7 +204,7 @@ function getTileColor(r: number, c: number) {
           {{ k }}
         </div>
       </div>
-      <div class="flex gap-1 sm:gap-2">
+      <div class="flex flex-1 gap-1 sm:gap-2">
         <div
           v-for="k in 'qsdfghjklm'.split('')"
           class="kbd"
@@ -209,7 +214,7 @@ function getTileColor(r: number, c: number) {
           {{ k }}
         </div>
       </div>
-      <div class="flex gap-1 sm:gap-2">
+      <div class="flex flex-1 gap-1 sm:gap-2">
         <div class="kbd px-4 sm:px-6" @click="del">Del</div>
         <div v-for="k in 'wxcvbn'.split('')" class="kbd" :class="getKeyColor(k)" @click="input(k)">
           {{ k }}
@@ -234,9 +239,10 @@ function getTileColor(r: number, c: number) {
 }
 
 .kbd {
-  @apply min-w-[32px] sm:min-w-[36px] px-2 sm:px-3 py-2
+  @apply min-w-[32px] sm:min-w-[36px] md:min-w-[44px] px-2 sm:px-3 py-2
          rounded-md sm:rounded-lg
          text-white font-bold uppercase text-sm
          flex justify-center items-center touch-none;
+  cursor: pointer;
 }
 </style>
