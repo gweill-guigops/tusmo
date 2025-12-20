@@ -177,7 +177,7 @@ function getTileColor(r: number, c: number) {
         <div
           v-for="(letter, c) in row"
           :key="c"
-          class="flex items-center justify-center uppercase font-bold text-xl sm:text-2xl border-2 text-white select-none [transform-style:preserve-3d] [backface-visibility:hidden] origin-center duration-300"
+          class="flex items-center justify-center uppercase font-bold text-sm sm:text-2xl border-2 text-white select-none [transform-style:preserve-3d] [backface-visibility:hidden] origin-center duration-300"
           :class="getTileColor(r, c)"
         >
           {{ letter }}
@@ -188,13 +188,13 @@ function getTileColor(r: number, c: number) {
 
   <div class="flex flex-col">
     <!-- CONTROLS -->
-    <p class="text-center text-xs sm:text-sm text-slate-400 mt-2">
+    <p class="flex-initial text-center text-xs sm:text-sm text-slate-400 mt-2">
       Vert : bien placé — Jaune : présent — Gris : absent
     </p>
 
     <!-- KEYBOARD -->
-    <div class="flex flex-1 flex-col items-center mt-6 gap-2 select-none">
-      <div class="flex flex-1 gap-1 sm:gap-2">
+    <div class="flex flex-col align-middle items-center mt-2 sm:mt-6 gap-2 select-none">
+      <div class="flex flex-row flex-1 align-middle items-center gap-1 sm:gap-2">
         <div
           v-for="k in 'azertyuiop'.split('')"
           class="kbd"
@@ -239,11 +239,11 @@ function getTileColor(r: number, c: number) {
 }
 
 .kbd {
-  @apply min-w-[32px] sm:min-w-[36px] md:min-w-[44px] px-2 sm:px-3 py-2
-         rounded-md sm:rounded-lg
+  @apply min-w-[24px] sm:min-w-[36px] md:min-w-[44px] px-2 sm:px-3 py-2
+         rounded-md md:rounded-lg
          text-white font-bold uppercase 
          flex justify-center items-center touch-none
-         text-lg;
+          sm:text-lg;
   cursor: pointer;
 }
 </style>

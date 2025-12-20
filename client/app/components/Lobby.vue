@@ -107,7 +107,7 @@ onMounted(() => {
 
         <div class="h-1/2">
           <div class="h-full max-h-10 flex align-top">
-            <PencilIcon class="flex-none max-w-12 p-1 bg-slate-100 rounded-l text-gray-500" />
+            <PencilIcon class="flex-1 max-w-12 p-1 bg-slate-100 rounded-l text-gray-500" />
             <input
               class="flex-auto rounded-r pl-3 text-gray-500"
               type="text"
