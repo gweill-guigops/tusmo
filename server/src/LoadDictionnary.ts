@@ -49,11 +49,6 @@ async function loadDictionary() {
   const dict8 = await loadBrotliDictionary('assets/valides_8.br');
   const dict9 = await loadBrotliDictionary('assets/valides_9.br');
 
-  distributionDictionary[6] = getDistribution(dict6);
-  distributionDictionary[7] = getDistribution(dict7);
-  distributionDictionary[8] = getDistribution(dict8);
-  distributionDictionary[9] = getDistribution(dict9);
-
   return new Map([
     [6, dict6],
     [7, dict7],
@@ -67,6 +62,11 @@ async function loadSolutions() {
   const dict7 = await loadBrotliDictionary('assets/solutions_7.br');
   const dict8 = await loadBrotliDictionary('assets/solutions_8.br');
   const dict9 = await loadBrotliDictionary('assets/solutions_9.br');
+
+  distributionDictionary[6] = getDistribution(dict6);
+  distributionDictionary[7] = getDistribution(dict7);
+  distributionDictionary[8] = getDistribution(dict8);
+  distributionDictionary[9] = getDistribution(dict9);
   return new Map([
     [6, dict6],
     [7, dict7],
@@ -104,8 +104,6 @@ export async function pickSolution(length: number): Promise<string> {
     throw new Error(`No dictionnary for words with length ${length}`);
   }
   const distribution = distributionDictionary[length];
-
-  const alphabetSize = alpha.size;
 
   const random = Math.random() * distribution.size;
 
