@@ -37,8 +37,15 @@ socket.on('players', (pl) => {
   players.value = pl;
 });
 
+const shake = ref(false);
+
 socket.on('deny-attempt', () => {
   isWaiting.value = false;
+
+  requestAnimationFrame(() => {
+    shake.value = true;
+    setTimeout(() => (shake.value = false), 1000);
+  });
 });
 
 socket.on('valid-attempt', (guess: Guess) => {
@@ -146,6 +153,7 @@ function isInTile(stage: number) {
           :disabled="isWaiting"
           :isEnded="isGameEnded"
           :guesses="guesses"
+          :shaking="shake"
           @submit="submit"
         ></Game>
       </Transition>

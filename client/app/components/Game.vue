@@ -7,6 +7,7 @@ const props = defineProps<{
   disabled: boolean;
   isEnded: boolean;
   guesses: Guess[];
+  shaking: boolean;
 }>();
 
 const emit = defineEmits(['submit']);
@@ -77,7 +78,7 @@ function input(letter) {
   guess.value += letter;
 }
 function canDel() {
-  return guess.value.length > 1;
+  return !props.disabled && guess.value.length > 1;
 }
 function del() {
   if (!canDel()) {
@@ -86,7 +87,7 @@ function del() {
   guess.value = guess.value.substring(0, guess.value.length - 1);
 }
 function canSubmit() {
-  return !props.isEnded && guess.value.length === props.wordInfo.size;
+  return !props.disabled && !props.isEnded && guess.value.length === props.wordInfo.size;
 }
 async function submit() {
   if (!canSubmit()) {
@@ -173,6 +174,7 @@ function getTileColor(r: number, c: number) {
           v-for="(row, r) in rows"
           :key="r"
           class="grid gap-0"
+          :class="[shaking && r === props.guesses.length ? 'animate-sway' : '']"
           :style="`grid-template-columns: repeat(${wordInfo.size}, 1fr)`"
         >
           <div
@@ -252,5 +254,33 @@ function getTileColor(r: number, c: number) {
     rounded-md md:rounded-lg
     text-white font-bold uppercase
      cursor-pointer touch-none;
+}
+
+@keyframes sway {
+  0% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(-6px);
+  }
+  30% {
+    transform: translateX(6px);
+  }
+  45% {
+    transform: translateX(-4px);
+  }
+  60% {
+    transform: translateX(4px);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-sway {
+  animation: sway 1s ease-in-out;
 }
 </style>
