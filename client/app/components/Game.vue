@@ -162,64 +162,71 @@ function getTileColor(r: number, c: number) {
 </script>
 
 <template>
-  <!-- BOARD -->
-  <div class="flex justify-center py-2 sm:py-4 bg-opacity-50">
-    <div
-      class="grid gap-2 sm:gap-2 w-full max-w-[360px] sm:max-w-none"
-      :style="`grid-template-rows: repeat(${config.attempts}, 1fr)`"
-    >
+  <div>
+    <!-- BOARD -->
+    <div class="flex justify-center py-2 sm:py-4 bg-opacity-50">
       <div
-        v-for="(row, r) in rows"
-        :key="r"
-        class="grid gap-0"
-        :style="`grid-template-columns: repeat(${wordInfo.size}, 1fr)`"
+        class="grid gap-2 sm:gap-2 w-full max-w-[360px] sm:max-w-none"
+        :style="`grid-template-rows: repeat(${config.attempts}, 1fr)`"
       >
         <div
-          v-for="(letter, c) in row"
-          :key="c"
-          class="flex items-center justify-center uppercase font-bold text-sm sm:text-2xl border-2 text-white select-none [transform-style:preserve-3d] [backface-visibility:hidden] origin-center duration-300"
-          :class="getTileColor(r, c)"
+          v-for="(row, r) in rows"
+          :key="r"
+          class="grid gap-0"
+          :style="`grid-template-columns: repeat(${wordInfo.size}, 1fr)`"
         >
-          {{ letter }}
+          <div
+            v-for="(letter, c) in row"
+            :key="c"
+            class="flex items-center justify-center uppercase font-bold text-sm sm:text-2xl border-2 text-white select-none [transform-style:preserve-3d] [backface-visibility:hidden] origin-center duration-300"
+            :class="getTileColor(r, c)"
+          >
+            {{ letter }}
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="flex flex-col">
-    <!-- CONTROLS -->
-    <p class="flex-initial text-center text-xs sm:text-sm text-slate-400 mt-2">
-      Vert : bien placé — Jaune : présent — Gris : absent
-    </p>
+    <div class="flex flex-col">
+      <!-- CONTROLS -->
+      <p class="flex-initial text-center text-xs sm:text-sm text-slate-400 mt-2">
+        Vert : bien placé — Jaune : présent — Gris : absent
+      </p>
 
-    <!-- KEYBOARD -->
-    <div class="flex flex-col align-middle items-center mt-2 sm:mt-6 gap-2 select-none">
-      <div class="flex flex-row flex-1 align-middle items-center gap-1 sm:gap-2">
-        <div
-          v-for="k in 'azertyuiop'.split('')"
-          class="kbd"
-          :class="getKeyColor(k)"
-          @click="input(k)"
-        >
-          {{ k }}
+      <!-- KEYBOARD -->
+      <div class="flex flex-col align-middle items-center mt-2 sm:mt-6 gap-2 select-none">
+        <div class="flex w-full gap-1 sm:gap-2">
+          <div
+            v-for="k in 'azertyuiop'.split('')"
+            class="kbd"
+            :class="getKeyColor(k)"
+            @click="input(k)"
+          >
+            {{ k }}
+          </div>
         </div>
-      </div>
-      <div class="flex flex-1 gap-1 sm:gap-2">
-        <div
-          v-for="k in 'qsdfghjklm'.split('')"
-          class="kbd"
-          :class="getKeyColor(k)"
-          @click="input(k)"
-        >
-          {{ k }}
+        <div class="flex w-full gap-1 sm:gap-2">
+          <div
+            v-for="k in 'qsdfghjklm'.split('')"
+            class="kbd"
+            :class="getKeyColor(k)"
+            @click="input(k)"
+          >
+            {{ k }}
+          </div>
         </div>
-      </div>
-      <div class="flex flex-1 gap-1 sm:gap-2">
-        <div class="kbd px-4 sm:px-6" @click="del">Del</div>
-        <div v-for="k in 'wxcvbn'.split('')" class="kbd" :class="getKeyColor(k)" @click="input(k)">
-          {{ k }}
+        <div class="flex w-full gap-1 sm:gap-2">
+          <div class="kbd" @click="del">Del</div>
+          <div
+            v-for="k in 'wxcvbn'.split('')"
+            class="kbd"
+            :class="getKeyColor(k)"
+            @click="input(k)"
+          >
+            {{ k }}
+          </div>
+          <div class="kbd" @click="submit">Enter</div>
         </div>
-        <div class="kbd px-4 sm:px-6" @click="submit">Enter</div>
       </div>
     </div>
   </div>
@@ -239,11 +246,11 @@ function getTileColor(r: number, c: number) {
 }
 
 .kbd {
-  @apply min-w-[24px] sm:min-w-[36px] md:min-w-[44px] px-2 sm:px-3 py-2
-         rounded-md md:rounded-lg
-         text-white font-bold uppercase 
-         flex justify-center items-center touch-none
-          sm:text-lg;
-  cursor: pointer;
+  @apply grow
+    px-2 sm:px-3 py-2 sm:py-3
+    text-center
+    rounded-md md:rounded-lg
+    text-white font-bold uppercase
+     cursor-pointer touch-none;
 }
 </style>

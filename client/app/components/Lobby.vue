@@ -51,7 +51,6 @@ function getUsername(player) {
   return player?.username ?? '';
 }
 onMounted(() => {
-  console.log('onMounted', socket);
   socket.emit('join-lobby');
 });
 </script>
