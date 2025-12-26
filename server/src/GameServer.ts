@@ -27,7 +27,7 @@ export class GameServer {
     this.createdAt = createdAt;
     this.startAt = createdAt + warmup;
     this.configuration = {
-      attempts: 8,
+      attempts: 7,
       words: 4,
     };
   }
