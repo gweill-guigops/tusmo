@@ -14,7 +14,7 @@ function joinLobby() {
 </script>
 
 <template>
-  <div class="relative min-h-screen bg-slate-950 overflow-hidden">
+  <div class="min-h-[100dvh] relative bg-slate-950 overflow-hidden">
     <div class="snow">
       <ClientOnly>
         <Room v-if="inGame" :roomID="roomID" @quit-room="joinLobby" />
