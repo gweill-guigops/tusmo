@@ -89,6 +89,14 @@ function quitRoom() {
 
   emits('quit-room');
 }
+
+function getPlayersByStage(stage: number) {
+  return players.value.filter((player) => player[1].length === stage).length;
+}
+
+function isInTile(stage: number) {
+  return wordInfo.value && wordInfo.value.size === 6 + stage - 1;
+}
 </script>
 
 <template>
@@ -97,21 +105,37 @@ function quitRoom() {
       class="h-full grid grid-rows-[0.1fr_3fr_2fr] bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 shadow-xl flex-auto"
     >
       <!-- HEADER -->
-      <header class="flex flex-row items-center justify-between mb-4 gap-2">
-        <div class="text-sm text-slate-400">
-          Room <span class="text-white font-semibold">{{ props.roomID }}</span>
+      <header>
+        <div class="flex flex-row items-center justify-between">
+          <div class="text-sm text-slate-400">
+            Room <span class="text-white font-semibold">{{ props.roomID }}</span>
+          </div>
+          <div
+            v-if="timer"
+            class="flex bg-gray-200 rounded-full items-center justify-center size-14"
+          >
+            <span id="timer" class="font-bold text-gray-500">
+              {{ timer }}
+            </span>
+          </div>
+          <button
+            class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white focus:ring-2 focus:ring-violet-500"
+            @click.prevent="quitRoom()"
+          >
+            <HomeIcon class="w-5 h-5 text-white-500" />
+          </button>
         </div>
-        <div v-if="timer" class="flex bg-gray-200 rounded-full items-center justify-center size-14">
-          <span id="timer" class="font-bold text-gray-500">
-            {{ timer }}
-          </span>
+        <div class="flex flex-row items-center justify-center gap-5 mt-2">
+          <div v-for="wordLength in configuration?.words" class="flex flex-col">
+            <div
+              class="border p-2 text-white rounded-md font-bold"
+              :class="isInTile(wordLength) ? 'bg-red-500' : ''"
+            >
+              {{ wordLength }}
+            </div>
+            <div class="p-2 text-white">{{ getPlayersByStage(wordLength) }}</div>
+          </div>
         </div>
-        <button
-          class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white focus:ring-2 focus:ring-violet-500"
-          @click.prevent="quitRoom()"
-        >
-          <HomeIcon class="w-5 h-5 text-white-500" />
-        </button>
       </header>
       <!-- ========== MAIN PANEL ========== -->
       <Transition>
@@ -134,10 +158,14 @@ function quitRoom() {
 
       <div class="flex flex-col gap-3 h-full overflow-x-hidden overflow-y-scroll">
         <div class="grid" v-for="([username, validations], index) in players" :key="index">
-          <div class="flex items-center gap-3 p-2 bg-white/5 border border-white/10 rounded-lg">
+          <div class="flex flex-col gap-3 p-2 bg-white/5 border border-white/10 rounded-lg">
+            <div class="flex flex-row justify-evenly">
+              <span class="font-semibold text-white">{{ username }}</span>
+              <span class="font-semibold text-white bg-slate-400 px-2">
+                {{ `${validations.length || 1} / ${configuration?.words}` }}
+              </span>
+            </div>
             <div class="w-full">
-              <div class="font-semibold text-white">{{ username }}</div>
-
               <div v-if="validations.toReversed().filter((v) => v.length > 0).length > 0">
                 <SummaryTable :validations="validations" class=""> </SummaryTable>
               </div>
