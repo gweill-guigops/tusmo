@@ -1,35 +1,36 @@
 services:
   traefik:
     image: traefik:v3.6.5
+    labels:
+      - 'traefik.enable=true'
     command:
-      # - '--entrypoints.websecure.address=:443'
-      # - '--entrypoints.websecure.http.tls=true'
       - '--entrypoints.web.address=:80'
-      # - '--entrypoints.web.http.redirections.entrypoint.to=websecure'
-      # - '--entrypoints.web.http.redirections.entrypoint.scheme=https'
-      # - '--entrypoints.web.http.redirections.entrypoint.permanent=true'
+      - '--entrypoints.websecure.address=:443'
 
-      # - '--providers.file.filename=/etc/traefik/traefik_dynamic.yml'
+      # Redirection HTTP → HTTPS
+      - '--entrypoints.web.http.redirections.entrypoint.to=websecure'
+      - '--entrypoints.web.http.redirections.entrypoint.scheme=https'
+
+      - '--entrypoints.websecure.http.tls=true'
+      - '--entrypoints.websecure.http.tls.certresolver=le'
+
+      - '--certificatesresolvers.le.acme.tlschallenge=true'
+      - '--certificatesresolvers.le.acme.email=guillaumeweill88@gmail.com'
+      - '--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json'
+      - '--certificatesresolvers.le.acme.httpchallenge.entrypoint=web'
+
       - '--providers.docker=true'
       - '--providers.docker.exposedByDefault=false'
-      - '--providers.docker.network=tusmo-net'
-      - '--api.dashboard=true'
+
       - '--api.insecure=false'
 
-      - '--api.dashboard=true'
-      - '--providers.docker=true'
-
       - '--log.level=INFO'
-      - '--log.format=json'
-      - '--log.filePath=/var/log/traefik.log'
     ports:
-      - '127.0.0.1:80:80'
-      - '127.0.0.1:443:443'
-      - '127.0.0.1:8080:8080' # Dashboard
+      - '80:80'
+      - '443:443'
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
-      # - './traefik_dynamic.yml:/etc/traefik/traefik_dynamic.yml:ro'
-      # - './certs:/certs:ro'
+      - './letsencrypt:/letsencrypt'
     networks:
       - tusmo-net
 
@@ -38,10 +39,27 @@ services:
     build: ./client
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.client.rule=PathPrefix(`/`)'
-      - 'traefik.http.routers.client.entrypoints=web'
-      - 'traefik.http.routers.client.service=client-service'
+
+      # Router HTTPS sécurisé
+      - 'traefik.http.routers.client-secure.entrypoints=websecure'
+      - 'traefik.http.routers.client-secure.rule=Host(`${DOMAIN_NAME}`)'
+      - 'traefik.http.routers.client-secure.priority=1'
+      - 'traefik.http.routers.client-secure.tls.certresolver=le'
+
+      # Configuration du port interne
+      - 'traefik.http.routers.client-secure.service=client-service'
       - 'traefik.http.services.client-service.loadbalancer.server.port=3000'
+
+      # Security headers
+      - 'traefik.http.middlewares.client-secure.headers.sslredirect=true'
+      - 'traefik.http.middlewares.client-secure.headers.stsseconds=31536000'
+      - 'traefik.http.middlewares.client-secure.headers.stsincludesubdomains=true'
+      - 'traefik.http.middlewares.client-secure.headers.stspreload=true'
+      - 'traefik.http.routers.client.middlewares=client-secure'
+
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+
     networks:
       - tusmo-net
 
@@ -50,15 +68,26 @@ services:
     build: ./server
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.server.rule=PathPrefix(`/socket.io`)'
-      - 'traefik.http.routers.server.entrypoints=web'
-      - 'traefik.http.routers.server.service=server-service'
+
+      # Router HTTPS sécurisé
+      - 'traefik.http.routers.server-secure.entrypoints=websecure'
+      - 'traefik.http.routers.server-secure.rule=Host(`${DOMAIN_NAME}`) && Path(`/socket.io/`)'
+      - 'traefik.http.routers.server-secure.tls.certresolver=le'
+      - 'traefik.http.routers.server-secure.priority=100'
+
+      - 'traefik.http.routers.server-secure.service=server-service'
+
+      # Configuration du port interne
       - 'traefik.http.services.server-service.loadbalancer.server.port=3001'
     environment:
       - NODE_ENV=production
+      - DOMAIN_NAME=${DOMAIN_NAME}
     networks:
       - tusmo-net
 
 networks:
   tusmo-net:
     driver: bridge
+
+volumes:
+  letsencrypt:
