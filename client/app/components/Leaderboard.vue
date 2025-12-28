@@ -90,7 +90,7 @@ function quitRoom() {
               <td
                 class="rounded-r-lg text-left pl-3"
                 :class="
-                  endedAt === 0 ? 'bg-gray-600' : isWon === true ? 'bg-blue-600' : 'bg-red-600'
+                  endedAt === null ? 'bg-gray-600' : isWon === true ? 'bg-blue-600' : 'bg-red-600'
                 "
               >
                 {{ getTimer(endedAt) }}
@@ -101,10 +101,10 @@ function quitRoom() {
       </div>
       <div class="h-1/6 w-full flex flex-col items-center justify-between mb-4 gap-2">
         <button
-          class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white focus:ring-2 focus:ring-violet-500"
+          class="size-10 sm:size-16 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white focus:ring-2 focus:ring-violet-500"
           @click.prevent="quitRoom()"
         >
-          <HomeIcon class="w-5 h-5 text-white-500" />
+          <HomeIcon class="p-2 text-white-500" />
         </button>
       </div>
     </section>

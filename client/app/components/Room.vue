@@ -119,7 +119,7 @@ function isInTile(stage: number) {
           </div>
           <div
             v-if="timer"
-            class="flex bg-gray-200 rounded-full items-center justify-center size-14"
+            class="flex relative -left-5 bg-gray-200 rounded-full items-center justify-center size-14"
           >
             <span id="timer" class="font-bold text-gray-500">
               {{ timer }}
