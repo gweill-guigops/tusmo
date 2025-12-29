@@ -1,7 +1,9 @@
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+
 import { GameManager } from './GameManager';
 import { Client } from './Client';
+
 import { loadAll } from './LoadDictionnary';
 
 const httpServer = createServer();
@@ -13,12 +15,14 @@ const gm = new GameManager(ns);
 
 setInterval(() => {
   gm.tick();
-  ns.to('join-lobby').emit('lobby', gm.getLobby().toString());
+  if (ns.adapter.rooms.has('join-lobby')) {
+    ns.to('join-lobby').emit('lobby', gm.getLobby().toString());
+  }
 }, 1000);
 
 io.on('connection', (socket) => {
-  console.log('Un utilisateur est connecté');
   const clientID = socket.id;
+  console.log('Utilisateur connecté', clientID);
 
   socket.on('join-lobby', () => {
     socket.join('join-lobby');
@@ -35,7 +39,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnecting', () => {
-    console.debug('disconnect', clientID, socket.rooms);
+    console.debug('Utilisateur déconnecté', clientID, socket.rooms);
     for (const roomID of socket.rooms ?? []) {
       const room = gm.getRoom(roomID);
       if (room === undefined) {
@@ -43,8 +47,6 @@ io.on('connection', (socket) => {
       }
       room.removeClient(clientID);
     }
-
-    console.log('Utilisateur déconnecté');
   });
 });
 

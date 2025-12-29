@@ -1,9 +1,10 @@
 import { MD5 } from 'object-hash';
 import { Namespace } from 'socket.io';
-import { Client, ClientPlay } from './Client';
-import { GameConfiguration } from './GameConfiguration';
 
+import { Client } from './Client';
 import { Game, GameImpl } from './Game';
+import { GameConfiguration } from './GameConfiguration';
+import { ClientPlay } from './ClientPlay';
 
 const warmup = 1000 * 20;
 
@@ -115,10 +116,10 @@ export class GameServer {
     ns.to(this.getRoom()).emit('start', this.configuration, this.startedAt);
 
     for (const [clientID, client] of this.clients) {
-      this.game.words[0];
+      const word = this.game.firstWord();
       client.getWs().emit('word-info', {
-        initial: this.game.words[0].charAt(0),
-        size: this.game.words[0].length,
+        initial: word.charAt(0),
+        size: word.length,
       });
     }
 

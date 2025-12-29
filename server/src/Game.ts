@@ -1,4 +1,5 @@
-import { Client, ClientPlay } from './Client';
+import { Client } from './Client';
+import { ClientPlay } from './ClientPlay';
 import { GameConfiguration } from './GameConfiguration';
 import { Guess, LetterState } from './Guess';
 import { isInDictionary, pickSolution } from './LoadDictionnary';
@@ -44,9 +45,9 @@ function compareWords(target: string, attempt: string): Guess {
 }
 
 export interface Game {
-  words: string[];
   submit(clientState: ClientPlay, client: Client, attempt: string): void;
   hasNext(number): boolean;
+  firstWord(): string;
   lost(number): boolean;
   init(): void;
 }
@@ -57,6 +58,10 @@ export class GameImpl implements Game {
 
   constructor(configuration: GameConfiguration) {
     this.configuration = configuration;
+  }
+
+  firstWord(): string {
+    return this.words[0];
   }
 
   async init() {
