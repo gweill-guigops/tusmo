@@ -66,12 +66,13 @@ export class GameServer {
   }
 
   async prestart(ns: Namespace) {
-    console.info('Game.prestart', this.id);
     this._hasPrestarted = true;
 
     if (this.getClients().size === 0) {
       return;
     }
+
+    console.info('Game.prestart', this.id);
 
     const clients = this.getClients().entries();
     for (const [clientID, client] of clients) {

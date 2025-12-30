@@ -86,6 +86,7 @@ export class GameImpl implements Game {
 
     if (guess.found) {
       if (this.hasNext(clientState.getTurnsSize())) {
+        // Next word
         clientState.addTurn();
         const word = this.words[clientState.getTurnsSize() - 1];
 
@@ -97,10 +98,12 @@ export class GameImpl implements Game {
           });
         }, 1000);
       } else {
+        // Game won
         clientState.endedAt = Date.now();
         clientState.isWon = true;
       }
     } else if (this.lost(turn.getGuessesSize())) {
+      // Game lost
       clientState.endedAt = Date.now();
       clientState.isWon = false;
     }
