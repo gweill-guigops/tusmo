@@ -82,7 +82,7 @@ function getTileColor(r: number, c: number) {
 </script>
 
 <template>
-  <div class="flex justify-center py-2 sm:py-4 bg-opacity-50">
+  <div class="flex justify-center pt-2 sm:pt-4 bg-opacity-50">
     <div
       class="grid gap-2 sm:gap-2 w-full max-w-[360px] sm:max-w-none"
       :style="`grid-template-rows: repeat(${config.attempts}, 1fr)`"
@@ -97,7 +97,7 @@ function getTileColor(r: number, c: number) {
         <div
           v-for="(letter, c) in row"
           :key="c"
-          class="flex items-center justify-center uppercase font-bold text-sm border-2 text-white select-none [transform-style:preserve-3d] [backface-visibility:hidden] origin-center duration-300"
+          class="flex items-center justify-center uppercase font-bold text-sm sm:text-base border-2 text-white select-none [transform-style:preserve-3d] [backface-visibility:hidden] origin-center duration-300"
           :class="getTileColor(r, c)"
         >
           {{ letter }}

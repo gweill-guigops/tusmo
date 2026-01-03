@@ -121,7 +121,7 @@ function isInTile(stage: number) {
 <template>
   <main
     v-if="!isEnded"
-    class="flex-auto min-h-0 overflow-hidden sm:min-w-[600px] md:min-w-[750px] max-w-[1100px] sm:mx-auto p-2 sm:p-6 flex gap-6"
+    class="flex-auto min-h-0 overflow-hidden sm:min-w-[600px] md:min-w-[750px] max-w-[1100px] sm:mx-auto p-2 sm:p-6 flex justify-between gap-6"
   >
     <section
       class="h-full grid grid-rows-[0.1fr_3fr_2fr] bg-white/5 border border-white/10 rounded-xl p-2 sm:p-6 shadow-xl flex-auto"

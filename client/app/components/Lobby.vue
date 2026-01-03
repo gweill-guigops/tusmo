@@ -62,20 +62,20 @@ onMounted(() => {
       <div class="letter bg-green-600 border-gray-800 rounded">O</div>
     </div>
   </header>
-  <main class="flex-auto flex min-h-0 overflow-hidden mx-auto p-4 sm:p-6 gap-6">
+  <main class="flex-auto flex min-h-0 overflow-hidden p-2 md:p-4 gap-6">
     <section
-      class="flex-auto flex flex-col min-h-0 bg-white/5 border border-white/10 rounded-xl p-4 md:p-6 shadow-xl"
+      class="flex-auto flex flex-col min-h-0 bg-white/5 border border-white/10 rounded-xl p-4 md:p-6 gap-2 shadow-xl"
     >
       <div class="flex-initial flex flex-col items-center justify-center">
         <h2 class="text-xl">Lobby Multijoueurs</h2>
-        <div v-if="lobby" class="max-w-20 bg-gray-200 rounded-full mt-2 md:mt-4 mb-2 md:mb-4 p-4">
+        <div v-if="lobby" class="max-w-20 bg-gray-200 rounded-full mt-2 md:mt-4 p-4">
           <span id="timer" class="text-4xl font-bold inline-block text-gray-500">
             {{ timer }}
           </span>
         </div>
       </div>
 
-      <div class="flex-auto min-h-0 overflow-auto py-5">
+      <div class="flex-auto min-h-0 overflow-auto">
         <table class="w-full table-fixed border-separate border-spacing-y-2">
           <tbody>
             <tr v-for="(player, index) in playersTable" :key="index">
@@ -124,7 +124,7 @@ onMounted(() => {
       </div>
     </section>
   </main>
-  <footer class="flex-initial my-2">
+  <footer class="flex-initial mb-2">
     <p class="logo">Basé sur le jeu wordle</p>
   </footer>
 </template>

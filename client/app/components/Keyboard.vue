@@ -82,12 +82,12 @@ function getKeyColor(letter) {
 <template>
   <div class="flex flex-col">
     <!-- CONTROLS -->
-    <p class="flex-initial text-center text-xs sm:text-sm text-slate-400 md:mt-2">
+    <p class="flex-initial text-center text-xs sm:text-sm text-slate-400 mt-2 md:mt-4">
       Vert : bien placé — Jaune : présent — Gris : absent
     </p>
 
     <!-- KEYBOARD -->
-    <div class="flex-auto flex flex-col align-middle items-center mt-2 md:mt-6 gap-2 select-none">
+    <div class="flex-auto flex flex-col align-middle items-center mt-2 md:mt-4 gap-2 select-none">
       <div class="flex-auto flex w-full gap-1 sm:gap-2">
         <div
           v-for="k in 'azertyuiop'.split('')"
@@ -123,6 +123,7 @@ function getKeyColor(letter) {
 <style lang="postcss" scoped>
 .kbd {
   @apply flex-1 text-center
+    text-sm sm:text-base
     content-center
     rounded-md md:rounded-lg
     text-white font-bold uppercase
