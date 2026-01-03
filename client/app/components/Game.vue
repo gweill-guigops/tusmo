@@ -97,7 +97,7 @@ function getTileColor(r: number, c: number) {
         <div
           v-for="(letter, c) in row"
           :key="c"
-          class="flex items-center justify-center uppercase font-bold text-sm sm:text-xl md:text-2xl border-2 text-white select-none [transform-style:preserve-3d] [backface-visibility:hidden] origin-center duration-300"
+          class="flex items-center justify-center uppercase font-bold text-sm border-2 text-white select-none [transform-style:preserve-3d] [backface-visibility:hidden] origin-center duration-300"
           :class="getTileColor(r, c)"
         >
           {{ letter }}
