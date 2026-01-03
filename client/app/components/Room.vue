@@ -23,9 +23,11 @@ const isEnded = ref(false);
 const isGameEnded = ref(false);
 const isWaiting = ref(false);
 
+const guess = ref('');
 const wordInfo = ref();
 socket.on('word-info', (info) => {
   wordInfo.value = info;
+  guess.value = wordInfo.value.initial;
   guesses.value = [];
   isGameEnded.value = false;
   isWaiting.value = false;
@@ -48,18 +50,28 @@ socket.on('deny-attempt', () => {
   });
 });
 
-socket.on('valid-attempt', (guess: Guess) => {
-  guesses.value.push(guess);
+socket.on('valid-attempt', (g: Guess) => {
+  guesses.value.push(g);
   isWaiting.value = false;
-  isGameEnded.value = guesses.value.length === configuration.value?.attempts || guess.found;
+  isGameEnded.value = guesses.value.length === configuration.value?.attempts || g.found;
   isEnded.value =
-    (guesses.value.length === configuration.value?.attempts && !guess.found) ||
-    (guess.found && wordInfo.value.isLast === true);
+    (guesses.value.length === configuration.value?.attempts && !g.found) ||
+    (g.found && wordInfo.value.isLast === true);
+
+  guess.value = wordInfo.value.initial;
 });
 
-async function submit(guess: string) {
+function submit() {
   isWaiting.value = true;
-  socket.emit('submit', guess);
+  socket.emit('submit', guess.value);
+}
+
+function input(letter: string) {
+  guess.value += letter;
+}
+
+function del() {
+  guess.value = guess.value.substring(0, guess.value.length - 1);
 }
 
 function getTimer() {
@@ -107,9 +119,12 @@ function isInTile(stage: number) {
 </script>
 
 <template>
-  <main v-if="!isEnded" class="h-screen max-w-[1100px] mx-auto p-4 sm:p-6 flex gap-6">
+  <main
+    v-if="!isEnded"
+    class="flex-auto min-h-0 overflow-hidden sm:min-w-[600px] md:min-w-[750px] max-w-[1100px] sm:mx-auto p-2 sm:p-6 flex gap-6"
+  >
     <section
-      class="h-full grid grid-rows-[0.1fr_3fr_2fr] bg-white/5 border border-white/10 rounded-xl p-4 sm:p-6 shadow-xl flex-auto"
+      class="h-full grid grid-rows-[0.1fr_3fr_2fr] bg-white/5 border border-white/10 rounded-xl p-2 sm:p-6 shadow-xl flex-auto"
     >
       <!-- HEADER -->
       <header>
@@ -150,13 +165,24 @@ function isInTile(stage: number) {
           v-if="configuration && wordInfo"
           :config="configuration"
           :wordInfo="wordInfo"
-          :disabled="isWaiting"
           :isEnded="isGameEnded"
           :guesses="guesses"
           :shaking="shake"
-          @submit="submit"
+          :guess="guess"
         ></Game>
       </Transition>
+      <Keyboard
+        v-if="configuration && wordInfo"
+        :config="configuration"
+        :wordInfo="wordInfo"
+        :disabled="isWaiting"
+        :isEnded="isGameEnded"
+        :guesses="guesses"
+        :guess="guess"
+        @submit="submit"
+        @del="del"
+        @input="input"
+      ></Keyboard>
     </section>
     <!-- ========== SIDEBAR ========== -->
     <aside
