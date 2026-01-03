@@ -1,8 +1,4 @@
 <script lang="ts" setup>
-interface Player {
-  id: string;
-}
-
 import { PencilIcon } from '@heroicons/vue/24/outline';
 const emit = defineEmits(['setRoom']);
 const { socket } = useWebSocket();
@@ -56,43 +52,52 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="h-full mx-auto p-4 sm:p-6 flex gap-6">
+  <header class="flex-initial">
+    <div class="logo">
+      <div class="letter bg-green-600 border-gray-800 rounded">T</div>
+      <div class="letter bg-white/5">R</div>
+      <div class="letter bg-white/5">I</div>
+      <div class="letter bg-yellow-500 border-yellow-700 rounded">S</div>
+      <div class="letter">M</div>
+      <div class="letter bg-green-600 border-gray-800 rounded">O</div>
+    </div>
+  </header>
+  <main class="flex-auto flex min-h-0 overflow-hidden mx-auto p-4 sm:p-6 gap-6">
     <section
-      class="h-full bg-white/5 border border-white/10 rounded-xl p-4 md:p-6 shadow-xl flex-1"
+      class="flex-auto flex flex-col min-h-0 bg-white/5 border border-white/10 rounded-xl p-4 md:p-6 shadow-xl"
     >
-      <div v-if="lobby" class="h-1/6 flex items-center justify-center">
-        <div class="max-w-20 bg-gray-200 rounded-full mt-2 md:mt-4 mb-2 md:mb-4 p-4">
+      <div class="flex-initial flex flex-col items-center justify-center">
+        <h2 class="text-xl">Lobby Multijoueurs</h2>
+        <div v-if="lobby" class="max-w-20 bg-gray-200 rounded-full mt-2 md:mt-4 mb-2 md:mb-4 p-4">
           <span id="timer" class="text-4xl font-bold inline-block text-gray-500">
             {{ timer }}
           </span>
         </div>
       </div>
 
-      <div class="h-4/6 py-5">
-        <div class="h-full overflow-y-auto scroller">
-          <table class="w-full table-fixed border-separate border-spacing-y-2">
-            <tbody>
-              <tr v-for="(player, index) in playersTable" :key="index">
-                <td class="size-12 rounded-l-lg bg-blue-500 text-center bold">
-                  {{ getInitial(player) }}
-                </td>
-                <td class="bg-blue-600 rounded-r-lg text-left pl-3">
-                  {{ getUsername(player) }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="flex-auto min-h-0 overflow-auto py-5">
+        <table class="w-full table-fixed border-separate border-spacing-y-2">
+          <tbody>
+            <tr v-for="(player, index) in playersTable" :key="index">
+              <td class="size-12 rounded-l-lg bg-blue-500 text-center bold">
+                {{ getInitial(player) }}
+              </td>
+              <td class="bg-blue-600 rounded-r-lg text-left pl-3">
+                {{ getUsername(player) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <div class="w-full h-1/6">
-        <div class="h-1/2">
+      <div class="flex-initial w-full">
+        <div class="mt-2">
           <button
             v-if="!hasJoin"
             className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
             @click.stop.prevent="join"
           >
-            Rejoindre
+            Rejoindre la partie
           </button>
 
           <button
@@ -100,12 +105,12 @@ onMounted(() => {
             className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
             @click.stop.prevent="quit"
           >
-            Quitter
+            Quitter le lobby
           </button>
         </div>
 
-        <div class="h-1/2">
-          <div class="h-full max-h-10 flex align-top">
+        <div class="mt-2">
+          <div class="max-h-10 flex align-top">
             <PencilIcon class="flex-1 max-w-12 p-1 bg-slate-100 rounded-l text-gray-500" />
             <input
               class="flex-auto rounded-r pl-3 text-gray-500"
@@ -119,9 +124,21 @@ onMounted(() => {
       </div>
     </section>
   </main>
+  <footer class="flex-initial my-2">
+    <p class="logo">Basé sur le jeu wordle</p>
+  </footer>
 </template>
 
 <style lang="postcss" scoped>
+.logo {
+  @apply flex w-full justify-center pt-4;
+  .letter {
+    @apply size-16 text-center text-4xl;
+    font-weight: 700;
+    line-height: 60px;
+  }
+}
+
 ::-webkit-scrollbar {
   width: 12px;
 }
