@@ -121,10 +121,10 @@ function isInTile(stage: number) {
 <template>
   <main
     v-if="!isEnded"
-    class="flex-auto min-h-0 overflow-hidden sm:min-w-[600px] md:min-w-[750px] max-w-[1100px] sm:mx-auto p-2 sm:p-6 flex justify-between gap-6"
+    class="flex-auto flex justify-center gap-6 min-h-0 overflow-hidden p-2 sm:p-6"
   >
     <section
-      class="h-full grid grid-rows-[0.1fr_3fr_2fr] bg-white/5 border border-white/10 rounded-xl p-2 sm:p-6 shadow-xl flex-auto"
+      class="flex-1 max-w-[700px] grid grid-rows-[0.1fr_3fr_2fr] bg-white/5 border border-white/10 rounded-xl p-2 sm:p-6 shadow-xl"
     >
       <!-- HEADER -->
       <header>
@@ -150,12 +150,12 @@ function isInTile(stage: number) {
         <div class="flex flex-row items-center justify-center gap-5 mt-2">
           <div v-for="wordLength in configuration?.words" class="flex flex-col">
             <div
-              class="border p-2 text-white rounded-md font-bold"
+              class="border p-1 text-white rounded-md font-bold"
               :class="isInTile(wordLength) ? 'bg-red-500' : ''"
             >
               {{ wordLength }}
             </div>
-            <div class="p-2 text-white">{{ getPlayersByStage(wordLength) }}</div>
+            <div class="p-1 text-white">{{ getPlayersByStage(wordLength) }}</div>
           </div>
         </div>
       </header>
@@ -186,7 +186,7 @@ function isInTile(stage: number) {
     </section>
     <!-- ========== SIDEBAR ========== -->
     <aside
-      class="bg-white/5 border border-white/10 rounded-xl py-2 md:p-2 shadow-xl hidden md:block flex-initial w-52"
+      class="hidden md:block flex-1 max-w-[250px] bg-white/5 border border-white/10 rounded-xl py-2 md:p-2 shadow-xl"
     >
       <h2 class="text-sm text-slate-400 mb-3">Joueurs</h2>
 
